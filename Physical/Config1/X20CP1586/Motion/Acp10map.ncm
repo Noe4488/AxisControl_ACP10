@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?AutomationStudio FileVersion="4.9"?>
+<NcMapping NcSwId="Acp10" DisabledNodesAreHidden="False">
+  <NcObject Name="gAxis01" ModuleId="8BVIxxxxxxDx.xxx-x" Type="ncAXIS" Channel="1" AcoposSimulation="Off" InitParameter="AxInit" AcoposParameter="AcpParTab" Disabled="FALSE" ModuleDisabled="FALSE" />
+  <NcObject Name="gAxis02" ModuleId="8BVIxxxxxxDx.xxx-x" Type="ncAXIS" Channel="2" AcoposSimulation="Off" InitParameter="AxInit" AcoposParameter="AcpParTab" Disabled="FALSE" ModuleDisabled="FALSE" />
+  <NcObject Name="gVMaster" ModuleId="8BVIxxxxxxDx.xxx-x" Type="ncV_AXIS" Channel="1" InitParameter="VAxInit" Disabled="FALSE" ModuleDisabled="FALSE" />
+  <NcObject Name="gVStep" ModuleId="8BVIxxxxxxDx.xxx-x" Type="ncV_AXIS" Channel="2" InitParameter="VAxInit" Disabled="FALSE" ModuleDisabled="FALSE" />
+</NcMapping>
