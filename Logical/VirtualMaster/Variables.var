@@ -1,0 +1,34 @@
+(*Motion FBs*)
+VAR
+	AxisBasic : MpAxisBasic;
+	AxisBasicPar : MpAxisBasicParType;
+	AxisConfig : MpAxisBasicConfig;
+	AxisConfigPar : MpAxisBasicConfigType;
+	AxisCam : MpAxisCamSequencer;
+	AxisCamPar : MpAxisCamSequencerParType;
+END_VAR
+(*Variables de control *)
+VAR
+	StAxis : AxisStates_enum; (*Esatdos del control del Eje*)
+	Direction : MpAxisMotorDirectionEnum;
+	AxisConfigDone : BOOL;
+	AxisConfigReq : BOOL;
+	LimitSpeed : REAL;
+	LimitAccDec : REAL;
+	GearIn : UDINT;
+	GearOut : UDINT;
+	AxisDirection : BOOL;
+	AxisName : STRING[20];
+	Period : LREAL;
+	ReferenceDistance : LREAL;
+	SectorNumber : LREAL;
+	AxisIndex : USINT;
+	OldVelocity : REAL;
+	OldPosition : LREAL;
+	Test : BOOL;
+	AccVal : REAL;
+	TestTiempo : REAL;
+	OldAcc : REAL;
+	OldDecel : REAL;
+	DecelVal : REAL;
+END_VAR

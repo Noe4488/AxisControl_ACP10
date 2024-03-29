@@ -4,7 +4,9 @@
   <TaskClass Name="Cyclic#1" />
   <TaskClass Name="Cyclic#2" />
   <TaskClass Name="Cyclic#3" />
-  <TaskClass Name="Cyclic#4" />
+  <TaskClass Name="Cyclic#4">
+    <Task Name="VirtualMas" Source="VirtualMaster.prg" Memory="UserROM" Language="IEC" Debugging="true" />
+  </TaskClass>
   <NcDataObjects>
     <NcDataObject Name="acp10etxen" Source="AxisObjects.acp10etxen.dob" Memory="UserROM" Language="Ett" />
     <NcDataObject Name="VAxInit" Source="AxisObjects.Virtual.VAxInit.dob" Memory="UserROM" Language="Vax" />
