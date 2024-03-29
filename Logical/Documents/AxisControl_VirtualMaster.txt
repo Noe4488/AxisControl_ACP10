@@ -6,7 +6,13 @@ el eje debe ser habilitado en la "Action" Config.st, por medio de la variable gA
 La mimsa activa las FB mpAxisBasic,mpAxisBasicConfig, mpAxisCamSequencer(esta o aplica para el eje maestro)
 
 10 .- Configuracion del Eje [STATE_CONFIG]:
-Se usa la estructura StConfing para la dministracion y actualizacion de los parametros de configuracion del eje
+Se usa la estructura StConfing para la dministracion y actualizacion de los parametros de configuracion del eje.
+
+20 .- Enciende el drive [STATE_POWER_ON]:
+Con el FB mpAxisBasic Se energiza el drive siempre y cuando el eje sea real de lo contrario se ira a home directamente.
+
+30 .- Homing del eje [STATE_HOME]:
+Se usara la estuctura HomeState_enum para la configuracion y ejecucion del home.
 
 9000 .- Control de Error [STATE_ERROR]:
 para que que se de un error es necesario que un bloque de funcion de control tenga la salida error = TRUE;

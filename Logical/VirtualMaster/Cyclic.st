@@ -82,6 +82,87 @@ PROGRAM _CYCLIC
 			
 		STATE_POWER_ON:	
 			
+			(* Energiza el eje siemnpre y cunado no se a virtual *)
+			
+			IF AxisBasic.Info.HardwareInfo.DeviceType = mpAXIS_VIRTUAL THEN 
+				StAxis := STATE_HOME;
+			ELSE
+				IF NOT AxisBasic.PowerOn THEN 
+					AxisBasic.Power := TRUE;
+				ELSIF AxisBasic.PowerOn THEN 
+					StHome := HOME_CONFIG;
+					StAxis := STATE_HOME;
+				END_IF
+			END_IF
+			
+		STATE_HOME:
+			
+			(* Ejecucion y configuracion del Home *)
+			
+			CASE StHome OF 
+				
+				(* Actualizacion del los parametros del home *)
+				
+				HOME_CONFIG: 
+					
+					AxisBasicPar.Home.Mode  							:= mpAXIS_HOME_MODE_DIRECT;
+					AxisBasicPar.Home.Position 							:= 0.0;
+					AxisBasicPar.Home.StartVelocity 					:= 50.0;
+					AxisBasicPar.Home.HomingVelocity 					:= 5.0;
+					AxisBasicPar.Home.SensorOffset 						:= 0.0;
+					AxisBasicPar.Home.Acceleration 						:= 500.0;
+					AxisBasicPar.Home.StartDirection 					:= mpAXIS_HOME_DIR_POSITIVE;
+					AxisBasicPar.Home.HomingDirection 					:= mpAXIS_HOME_DIR_POSITIVE;
+					AxisBasicPar.Home.NoDirectionChange 				:= mpAXIS_HOME_OPTION_OFF;
+					AxisBasicPar.Home.SwitchEdge 						:= mpAXIS_HOME_DIR_POSITIVE;
+					AxisBasicPar.Home.ReferencePulse 					:= mpAXIS_HOME_OPTION_OFF;
+					AxisBasicPar.Home.ReferencePulseBlockingDistance 	:= 0.0;
+					AxisBasicPar.Home.TorqueLimit 						:= 0.0;
+					AxisBasicPar.Home.BlockDetectionPositionError 		:= 0.0;
+					AxisBasicPar.Home.PositionErrorStopLimit 			:= 0.0;
+					AxisBasicPar.Home.EndlessPositionDataRef 			:= 0;
+					
+					
+					AxisBasic.Update := TRUE;
+					
+					IF AxisBasic.UpdateDone THEN 
+						StHome := HOME_CONFIG_DONE;
+					END_IF
+					
+				HOME_CONFIG_DONE:
+					
+					(* Configuracion Home Actualizada *)
+					
+					AxisBasic.Update := FALSE;
+					StHome := HOME_REQ;
+					
+				HOME_REQ:
+					
+					(* Ejecucion del home *)
+					
+					AxisBasic.Home := TRUE;
+					
+					IF AxisBasic.IsHomed THEN 
+						StHome := HOME_DONE;
+					END_IF
+					
+				HOME_DONE:
+					
+					(* Ejecucion del home terminada *)
+					
+					AxisBasic.Home := FALSE;
+					StAxis := STATE_IDLE;
+				
+			END_CASE
+			
+		STATE_IDLE:
+			
+					
+					
+					
+					
+							
+			
 		STATE_ERROR:
 			
 	END_CASE
