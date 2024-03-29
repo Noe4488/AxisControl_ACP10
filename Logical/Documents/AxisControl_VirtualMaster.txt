@@ -1,7 +1,9 @@
 CONTROL DE EJE MAESTRO 
 Estados de la secuencia de control
 
-1.- Habilitar el Eje [STATE_INIT]:
+0 .- Habilitar el Eje [STATE_INIT]:
 
-el eje debe ser habilitado en la "Action" Config.st, por medio de la variable gAxis[AxisIndex].Cmd.Enable
-En otra rutina "manager" se verificara cuantos ejes estaran habilitados por medio de la canstante global MAX_AXIS 
+el eje debe ser habilitado en la "Action" Config.st, por medio de la variable gAxis[AxisIndex].Enable
+
+9000 .- Control de Error [STATE_ERROR]; para que que se de un error es necesario que un bloque de funcion de control tenga la salida error = TRUE;
+		para restablecer el error la variable gAxis[AxisIndex].Cmd.Reset = TRUE,

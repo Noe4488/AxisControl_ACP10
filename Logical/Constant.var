@@ -1,7 +1,8 @@
-VAR CONSTANT
-	MAX_AXIS : USINT := 4; (*Cantidad maxima de ejes *)
-END_VAR
 (*Asignacion ejes*)
 VAR CONSTANT
 	VMASTER : USINT := 0;
+END_VAR
+(*Constantes de control de programa*)
+VAR CONSTANT
+	MAX_AXIS : USINT := 4; (*Cantidad maxima de ejes *)
 END_VAR
