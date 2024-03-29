@@ -170,7 +170,7 @@ PROGRAM _CYCLIC
 	
 	//----- Administracion de Errores ------//
 	
-	gAxis[AxisIndex].Sts.Error := AxisBasic.Error OR AxisConfig.Error OR AxisCam.Error;
+	gAxis[AxisIndex].Sts.Error := AxisBasic.Error OR AxisConfig.Error OR AxisCam.Error OR NOT gAxis[AxisIndex].Enable;
 	
 	IF gAxis[AxisIndex].Sts.Error THEN
 		StAxis := STATE_ERROR;

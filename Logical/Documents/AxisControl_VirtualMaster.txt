@@ -17,3 +17,4 @@ Se usara la estuctura HomeState_enum para la configuracion y ejecucion del home.
 9000 .- Control de Error [STATE_ERROR]:
 para que que se de un error es necesario que un bloque de funcion de control tenga la salida error = TRUE;
 para restablecer el error la variable gAxis[AxisIndex].Cmd.Reset = TRUE.
+a .- se agrega como concidion de error gAxis[AxisIndex].Enable = FALSE.
