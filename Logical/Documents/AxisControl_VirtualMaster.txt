@@ -2,8 +2,12 @@ CONTROL DE EJE MAESTRO
 Estados de la secuencia de control
 
 0 .- Habilitar el Eje [STATE_INIT]:
+el eje debe ser habilitado en la "Action" Config.st, por medio de la variable gAxis[AxisIndex].Enable.
+La mimsa activa las FB mpAxisBasic,mpAxisBasicConfig, mpAxisCamSequencer(esta o aplica para el eje maestro)
 
-el eje debe ser habilitado en la "Action" Config.st, por medio de la variable gAxis[AxisIndex].Enable
+10 .- Configuracion del Eje [STATE_CONFIG]:
+Se usa la estructura StConfing para la dministracion y actualizacion de los parametros de configuracion del eje
 
-9000 .- Control de Error [STATE_ERROR]; para que que se de un error es necesario que un bloque de funcion de control tenga la salida error = TRUE;
-		para restablecer el error la variable gAxis[AxisIndex].Cmd.Reset = TRUE,
+9000 .- Control de Error [STATE_ERROR]:
+para que que se de un error es necesario que un bloque de funcion de control tenga la salida error = TRUE;
+para restablecer el error la variable gAxis[AxisIndex].Cmd.Reset = TRUE.

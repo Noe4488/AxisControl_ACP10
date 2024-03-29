@@ -9,7 +9,6 @@ VAR
 END_VAR
 (*Variables de control *)
 VAR
-	StAxis : AxisStates_enum; (*Esatdos del control del Eje*)
 	Direction : MpAxisMotorDirectionEnum;
 	AxisConfigDone : BOOL;
 	AxisConfigReq : BOOL;
@@ -31,4 +30,9 @@ VAR
 	OldAcc : REAL;
 	OldDecel : REAL;
 	DecelVal : REAL;
+END_VAR
+(*Variables control de secuancias*)
+VAR
+	StAxis : AxisStates_enum; (*Esatdos del control del Eje*)
+	StConfig : ConfigStates_enum;
 END_VAR
