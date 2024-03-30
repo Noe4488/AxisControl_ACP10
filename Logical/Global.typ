@@ -10,12 +10,24 @@ TYPE
 		Enable : BOOL;
 		Reset : BOOL;
 		ConfigReq : BOOL;
+		JogModeReq : BOOL; (*Seleccion modo jog*)
+		Jog : BOOL; (*Comando Movimiento en Jog*)
+		MoveAbsolute : BOOL;
 	END_STRUCT;
 	AxisStatus_type : 	STRUCT 
 		ConfigDone : BOOL;
 		Error : BOOL;
+		PowerOn : BOOL;
+		HomeDone : BOOL;
+		Idle : BOOL;
+		Jog : BOOL;
 	END_STRUCT;
 	AxisParameters_type : 	STRUCT 
-		New_Member : USINT;
+		Jog : JogParameter_type;
+	END_STRUCT;
+	JogParameter_type : 	STRUCT 
+		Speed : REAL := 100.0;
+		Acc : REAL := 400.0;
+		Decel : REAL := 400.0;
 	END_STRUCT;
 END_TYPE

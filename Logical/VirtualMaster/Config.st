@@ -66,7 +66,11 @@ ACTION Config:
 			
 	END_IF
 	
-			
+	////---- Limites asignados jog ----////
+	
+	gAxis[AxisIndex].Par.Jog.Acc 	:= LIMIT(MIN_ACC_DECEL_JOG,gAxis[AxisIndex].Par.Jog.Acc,MAX_ACC_DECEL_JOG);
+	gAxis[AxisIndex].Par.Jog.Decel 	:= LIMIT(MIN_ACC_DECEL_JOG,gAxis[AxisIndex].Par.Jog.Decel,MAX_ACC_DECEL_JOG);
+	gAxis[AxisIndex].Par.Jog.Speed 	:= LIMIT(MIN_SPEED_JOG,gAxis[AxisIndex].Par.Jog.Speed,MAX_SPEED_JOG);
 	
 	////---- FB Control del eje -----////
 	

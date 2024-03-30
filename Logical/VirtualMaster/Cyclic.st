@@ -13,7 +13,7 @@ PROGRAM _CYCLIC
 	///////////////////////////
 	
 	
-	//----- Habilita el Eje ------//
+	//----- Habilita Eje ------//
 	
 	AxisBasic.Enable 	:= gAxis[AxisIndex].Enable;
 	AxisConfig.Enable 	:= AxisBasic.Active;
@@ -25,7 +25,7 @@ PROGRAM _CYCLIC
 	
 	CASE StAxis OF
 		
-		STATE_INIT:
+		STATE_INIT: ////////////////////////////////////////
 			
 			(* inicializacion del Eje *)
 			
@@ -34,7 +34,7 @@ PROGRAM _CYCLIC
 				StAxis := STATE_CONFIG;
 			END_IF
 			
-		STATE_CONFIG:
+		STATE_CONFIG: ////////////////////////////////////////
 			
 			CASE StConfig OF
 				
@@ -80,7 +80,7 @@ PROGRAM _CYCLIC
 				
 			END_CASE
 			
-		STATE_POWER_ON:	
+		STATE_POWER_ON:	////////////////////////////////////////
 			
 			(* Energiza el eje siemnpre y cunado no se a virtual *)
 			
@@ -95,7 +95,7 @@ PROGRAM _CYCLIC
 				END_IF
 			END_IF
 			
-		STATE_HOME:
+		STATE_HOME: ////////////////////////////////////////
 			
 			(* Ejecucion y configuracion del Home *)
 			
@@ -155,15 +155,118 @@ PROGRAM _CYCLIC
 				
 			END_CASE
 			
-		STATE_IDLE:
+		STATE_IDLE: ////////////////////////////////////////
+			
+			(* seleccion modo operacion *)
+			IF gAxis[AxisIndex].Cmd.JogModeReq THEN 
+				StJog 	:= JOG_CONFIG_REQ;
+				StAxis 	:= STATE_JOG;
+			ELSIF gAxis[AxisIndex].Cmd.MoveAbsolute THEN 
+				StAxis := STATE_MOVE_ABSOLUTE;
+			END_IF
+			
+		STATE_JOG: ////////////////////////////////////////
+		
+			CASE StJog OF
+				
+				JOG_CONFIG_REQ:
+					
+					(* Configuracion parametros Jog *)
+					
+					AxisBasicPar.Jog.Acceleration 	:= gAxis[AxisIndex].Par.Jog.Acc;	
+					AxisBasicPar.Jog.Deceleration 	:= gAxis[AxisIndex].Par.Jog.Decel;	
+					AxisBasicPar.Jog.Velocity		:= gAxis[AxisIndex].Par.Jog.Speed;	
+					AxisBasicPar.Jog.LowerLimit		:= 0.0;
+					AxisBasicPar.Jog.UpperLimit		:= 0.0;
+					TON_Jog.PT 						:= JOG_TIME;
+					
+					AxisBasic.Update := TRUE;
+					
+					IF AxisBasic.UpdateDone THEN 
+						StJog := JOG_CONFIG_DONE;
+					END_IF
+					
+				JOG_CONFIG_DONE: 
+				
+					(* Actualiza Configuracion *)
+					
+					AxisBasic.Update := FALSE;
+					StJog := JOG_WAIT;
+				
 			
 					
+				JOG_WAIT:
 					
+					(* A espera de comando Jog *)
 					
+					AxisBasic.JogNegative := FALSE;
+					AxisBasic.JogPositive := FALSE;
 					
-							
+					TON_Jog.IN := gAxis[AxisIndex].Cmd.Jog;
+					
+					IF TON_Jog.Q THEN 
+						StJog := JOG_EXECUTE;
+					END_IF
+				
+				JOG_EXECUTE:
+				
+					(* Jog Ejecutandose *)
+					
+					IF AxisBasicPar.Direction = mpAXIS_DIR_POSITIVE THEN 
+						AxisBasic.JogPositive := TRUE;
+					ELSE
+						AxisBasic.JogNegative := TRUE;
+					END_IF
+				
+					IF NOT gAxis[AxisIndex].Cmd.Jog THEN 
+						StJog := JOG_WAIT;
+					END_IF
+					
+				JOG_DONE:
+					
+					(* secuencia jog terminada *)
+					
+					AxisBasic.JogNegative 	:= FALSE;
+					AxisBasic.JogPositive 	:= FALSE;
+					TON_Jog.IN 				:= FALSE;
+					StAxis 					:= STATE_IDLE;
+					
+				JOG_SAFE_STOP: 
+				
+					(* Paro de seguridad del eje antes de actualizacion de parametros *)
+					
+					AxisBasic.JogNegative 	:= FALSE;
+					AxisBasic.JogPositive 	:= FALSE;
+					TON_Jog.IN 				:= FALSE;
+				
+					IF NOT AxisBasic.MoveActive AND NOT gAxis[AxisIndex].Cmd.Jog THEN
+						StJog := JOG_CONFIG_REQ;
+					END_IF
+
+			END_CASE
 			
-		STATE_ERROR:
+			
+			////--- Verifica cambio de parametrso jog
+			
+			IF (StJog = JOG_WAIT OR StJog = JOG_EXECUTE) AND (AxisBasicPar.Jog.Acceleration <> gAxis[AxisIndex].Par.Jog.Acc OR
+				AxisBasicPar.Jog.Deceleration <> gAxis[AxisIndex].Par.Jog.Decel	OR AxisBasicPar.Jog.Velocity <> gAxis[AxisIndex].Par.Jog.Speed) THEN 
+		
+				StJog := JOG_SAFE_STOP;
+				
+			END_IF
+			
+			//// ---- Modo Jog desactivado
+			
+			IF NOT gAxis[AxisIndex].Cmd.JogModeReq THEN 
+				StJog := JOG_DONE;
+			END_IF	
+			
+		STATE_MOVE_ABSOLUTE: ////////////////////////////////////////
+			
+			
+			
+			
+		STATE_ERROR: ////////////////////////////////////////
 			
 	END_CASE
 	
@@ -183,6 +286,19 @@ PROGRAM _CYCLIC
 	
 	///////////////////////////////////////////
 		
+	//----- Status del eje -----//
 	
-	 
+	gAxis[AxisIndex].Sts.PowerOn 	:= AxisBasic.PowerOn;
+	gAxis[AxisIndex].Sts.HomeDone 	:= AxisBasic.IsHomed;
+	gAxis[AxisIndex].Sts.Idle		:= StAxis = STATE_IDLE;
+	gAxis[AxisIndex].Sts.Jog		:= StAxis = STATE_JOG;
+	
+	///////////////////////////////////////////
+	
+	//----- FB Auxiliares -----//
+	
+	TON_Jog();
+	
+	///////////////////////////////////////////
+	
 END_PROGRAM

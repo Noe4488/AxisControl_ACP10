@@ -8,5 +8,6 @@
     <File Description="Exit code">Exit.st</File>
     <File Description="Local data types" Private="true">Types.typ</File>
     <File Description="Local variables" Private="true">Variables.var</File>
+    <File Description="Local Constants" Private="true">Constants.var</File>
   </Files>
 </Program>

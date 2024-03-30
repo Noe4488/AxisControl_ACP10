@@ -14,6 +14,16 @@ Con el FB mpAxisBasic Se energiza el drive siempre y cuando el eje sea real de l
 30 .- Homing del eje [STATE_HOME]:
 Se usara la estuctura HomeState_enum para la configuracion y ejecucion del home.
 
+40 .- Etsado de espeara para modo de operacion [STATE_IDLE]:
+
+50 .- Modo de Operacion en Jog [ESTATE_JOG]:
+El control del jog esta en secuancia, los estados de la secuancia estan controlados por la estrcutura JogEstate_enum
+la secuencuencia esta dividad en configuracion de parametros del jog, estado espera de activacion, para activarse el bit gAxis[AxisIndex].Cmd.Jog debe
+ser TRUE tiene un tiempo de espera antes de inciar el movimiento de 4 Segundos, este tiempo esta definido en la constante JOG_TIME.
+Si un cambio de parametros se efectua como vel, acc, decel, el movimiento se detendra y tendra que gAxis[AxisIndex].Cmd.Jog = FALSE y reiniciar la activacion.  
+
+60 .- Modo de operacion [ESTATE_MOVE_ABSOLUTE]:
+
 9000 .- Control de Error [STATE_ERROR]:
 para que que se de un error es necesario que un bloque de funcion de control tenga la salida error = TRUE;
 para restablecer el error la variable gAxis[AxisIndex].Cmd.Reset = TRUE.
