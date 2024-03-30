@@ -12,6 +12,7 @@ TYPE
 		ConfigReq : BOOL;
 		JogModeReq : BOOL; (*Seleccion modo jog*)
 		Jog : BOOL; (*Comando Movimiento en Jog*)
+		MoveAbsoluteModeReq : BOOL;
 		MoveAbsolute : BOOL;
 	END_STRUCT;
 	AxisStatus_type : 	STRUCT 

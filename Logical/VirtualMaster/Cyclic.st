@@ -161,7 +161,7 @@ PROGRAM _CYCLIC
 			IF gAxis[AxisIndex].Cmd.JogModeReq THEN 
 				StJog 	:= JOG_CONFIG_REQ;
 				StAxis 	:= STATE_JOG;
-			ELSIF gAxis[AxisIndex].Cmd.MoveAbsolute THEN 
+			ELSIF gAxis[AxisIndex].Cmd.MoveAbsoluteModeReq THEN 
 				StMoveAbsolute := MOVE_ABSOLUTE_CONFIG;
 				StAxis := STATE_MOVE_ABSOLUTE;
 			END_IF
@@ -274,15 +274,24 @@ PROGRAM _CYCLIC
 					AxisBasic.Update := TRUE;
 					
 					IF AxisBasic.UpdateDone THEN 
-						StMoveAbsolute := MOVE_ABSOLUTE_EXECUTE;
+						StMoveAbsolute := MOVE_ABSOLUTE_WAIT;
 					END_IF
 					
+				MOVE_ABSOLUTE_WAIT:
 					
+					(* Espera comando de movimiento absoluto *)
+					
+					AxisBasic.Update := FALSE;
+					
+					IF gAxis[AxisIndex].Cmd.MoveAbsolute THEN 
+						StMoveAbsolute := MOVE_ABSOLUTE_EXECUTE;
+					END_IF
+				
 				MOVE_ABSOLUTE_EXECUTE:
 					
 					(* Executa movimiento absoluto *)
 							
-					AxisBasic.Update := FALSE;
+					gAxis[AxisIndex].Cmd.MoveAbsolute := FALSE; 
 					AxisBasic.MoveAbsolute := TRUE;
 					
 					IF AxisBasic.Position = gAxis[AxisIndex].Par.AbsolutePosition AND NOT AxisBasic.MoveActive THEN 
@@ -303,12 +312,14 @@ PROGRAM _CYCLIC
 					
 					(* Modo movimineto absoluto terminado *) 
 					
+					AxisBasic.Update := FALSE;
+					AxisBasic.MoveAbsolute := FALSE;
 					StAxis := STATE_IDLE;
 					
 			END_CASE
 			
 			////---- Cambio modo de operacion
-			IF NOT gAxis[AxisIndex].Cmd.MoveAbsolute THEN 
+			IF NOT gAxis[AxisIndex].Cmd.MoveAbsoluteModeReq THEN 
 				StMoveAbsolute := MOVE_ABSOLUTE_DONE;
 			END_IF
 				
