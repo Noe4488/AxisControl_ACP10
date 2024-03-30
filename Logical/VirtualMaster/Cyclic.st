@@ -162,6 +162,7 @@ PROGRAM _CYCLIC
 				StJog 	:= JOG_CONFIG_REQ;
 				StAxis 	:= STATE_JOG;
 			ELSIF gAxis[AxisIndex].Cmd.MoveAbsolute THEN 
+				StMoveAbsolute := MOVE_ABSOLUTE_CONFIG;
 				StAxis := STATE_MOVE_ABSOLUTE;
 			END_IF
 			
@@ -263,8 +264,54 @@ PROGRAM _CYCLIC
 			
 		STATE_MOVE_ABSOLUTE: ////////////////////////////////////////
 			
+			CASE StMoveAbsolute OF
+				
+				MOVE_ABSOLUTE_CONFIG:
 			
+					(* Asignacion posicion del Eje *)
+
+					AxisBasicPar.Position := gAxis[AxisIndex].Par.AbsolutePosition;
+					AxisBasic.Update := TRUE;
+					
+					IF AxisBasic.UpdateDone THEN 
+						StMoveAbsolute := MOVE_ABSOLUTE_EXECUTE;
+					END_IF
+					
+					
+				MOVE_ABSOLUTE_EXECUTE:
+					
+					(* Executa movimiento absoluto *)
+							
+					AxisBasic.Update := FALSE;
+					AxisBasic.MoveAbsolute := TRUE;
+					
+					IF AxisBasic.Position = gAxis[AxisIndex].Par.AbsolutePosition AND NOT AxisBasic.MoveActive THEN 
+						StMoveAbsolute := MOVE_ASOLUTE_IN_POSITION;
+					END_IF
+					
+				MOVE_ASOLUTE_IN_POSITION:
+					
+					(* Posicion Absoluta alcanzada *)
+					
+					AxisBasic.MoveAbsolute := FALSE;
+					
+					IF AxisBasicPar.Position <> gAxis[AxisIndex].Par.AbsolutePosition THEN
+						StMoveAbsolute := MOVE_ABSOLUTE_CONFIG;
+					END_IF
+					
+				MOVE_ABSOLUTE_DONE:
+					
+					(* Modo movimineto absoluto terminado *) 
+					
+					StAxis := STATE_IDLE;
+					
+			END_CASE
 			
+			////---- Cambio modo de operacion
+			IF NOT gAxis[AxisIndex].Cmd.MoveAbsolute THEN 
+				StMoveAbsolute := MOVE_ABSOLUTE_DONE;
+			END_IF
+				
 			
 		STATE_ERROR: ////////////////////////////////////////
 			

@@ -24,6 +24,7 @@ TYPE
 	END_STRUCT;
 	AxisParameters_type : 	STRUCT 
 		Jog : JogParameter_type;
+		AbsolutePosition : LREAL := 0.0;
 	END_STRUCT;
 	JogParameter_type : 	STRUCT 
 		Speed : REAL := 100.0;
