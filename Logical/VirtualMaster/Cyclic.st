@@ -164,6 +164,9 @@ PROGRAM _CYCLIC
 			ELSIF gAxis[AxisIndex].Cmd.MoveAbsoluteModeReq THEN 
 				StMoveAbsolute := MOVE_ABSOLUTE_CONFIG;
 				StAxis := STATE_MOVE_ABSOLUTE;
+			ELSIF gAxis[AxisIndex].Cmd.MoveAdditiveModeReq THEN 
+				StMoveAdditive := MOVE_ADDITIVE_CONFIG;
+				StAxis := STATE_MOVE_ADDITIVE;
 			END_IF
 			
 		STATE_JOG: ////////////////////////////////////////
@@ -323,8 +326,67 @@ PROGRAM _CYCLIC
 				StMoveAbsolute := MOVE_ABSOLUTE_DONE;
 			END_IF
 				
+	STATE_MOVE_ADDITIVE: ////////////////////////////////////////
+		
+		CASE StMoveAdditive OF 
 			
-		STATE_ERROR: ////////////////////////////////////////
+				MOVE_ADDITIVE_CONFIG:
+					
+					(* Asignacion posicion del Eje *)
+
+					AxisBasicPar.Distance := gAxis[AxisIndex].Par.AdditivePosition;
+					AxisBasic.Update := TRUE;
+					
+					IF AxisBasic.UpdateDone THEN 
+						StMoveAdditive := MOVE_ADDITIVE_WAIT;
+					END_IF
+				
+								
+				MOVE_ADDITIVE_WAIT:
+					
+					
+					AxisBasic.Update := FALSE;
+					
+					IF gAxis[AxisIndex].Cmd.MoveAdditive THEN 
+						StMoveAdditive := MOVE_ADDITIVE_EXECUTE;
+					END_IF
+						
+					
+				MOVE_ADDITIVE_EXECUTE:
+					
+					
+					AxisBasic.MoveAdditive := TRUE;
+					gAxis[AxisIndex].Cmd.MoveAdditive := FALSE;
+					
+					IF AxisBasic.InPosition AND NOT AxisBasic.MoveActive THEN 
+						StMoveAdditive := MOVE_ADDITIVE_IN_POSITION;
+					END_IF
+					
+				
+				MOVE_ADDITIVE_IN_POSITION:
+					
+					AxisBasic.MoveAdditive := FALSE;
+					
+					IF AxisBasic.Position <> gAxis[AxisIndex].Par.AdditivePosition THEN 
+						StMoveAdditive := MOVE_ADDITIVE_CONFIG;
+					END_IF
+					
+				MOVE_ADDITIVE_DONE:
+					
+					StAxis := STATE_IDLE;
+	
+			END_CASE
+			
+			
+		////---- Cambio modo de operacion
+		IF NOT gAxis[AxisIndex].Cmd.MoveAdditiveModeReq THEN 
+			StMoveAdditive := MOVE_ADDITIVE_DONE;
+		END_IF
+			
+		
+		
+	STATE_ERROR: ////////////////////////////////////////
+	
 			
 	END_CASE
 	

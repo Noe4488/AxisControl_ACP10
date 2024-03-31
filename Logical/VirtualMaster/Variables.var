@@ -38,6 +38,7 @@ VAR
 	StHome : HomeState_enum;
 	StMoveAbsolute : AbsoluteMov_enum;
 	StJog : JogStates_enum;
+	StMoveAdditive : AdditiveMov_enum;
 END_VAR
 (*Variables secuencia JOG*)
 VAR

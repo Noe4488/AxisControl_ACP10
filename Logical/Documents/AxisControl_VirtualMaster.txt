@@ -22,10 +22,15 @@ la secuencuencia esta dividad en configuracion de parametros del jog, estado esp
 ser TRUE tiene un tiempo de espera antes de inciar el movimiento de 4 Segundos, este tiempo esta definido en la constante JOG_TIME.
 Si un cambio de parametros se efectua como vel, acc, decel, el movimiento se detendra y tendra que gAxis[AxisIndex].Cmd.Jog = FALSE y reiniciar la activacion.  
 
-60 .- Modo de operacion [ESTATE_MOVE_ABSOLUTE]:
+60 .- Modo de operacion [STATE_MOVE_ABSOLUTE]:
 Seleccion movimiento absoluto gAxis[AxisIndex].Cmd.MoveAbsolute = TRUE, el eje se movera a la posicion 
 en gAxis[AxisIndex].Par.AbsolutePosition puede cambiar la posicion mientras gAxis[AxisIndex].Cmd.MoveAbsolute = TRUE.
 se controla la secuancia con la estructura AbosluteMove_enum.
+
+70 .- Modo de operacion [STATE_MOVE_ADDITIVE]:
+Seleccion movimiento aditivo gAxis[AxisIndex].Cmd.MoveAdditive = TRUE, el eje se movera a la posicion 
+en gAxis[AxisIndex].Par.AdditivePosition puede cambiar la posicion mientras gAxis[AxisIndex].Cmd.MoveAdditive = TRUE.
+se controla la secuancia con la estructura AdditiveMove_enum.
 
 9000 .- Control de Error [STATE_ERROR]:
 para que que se de un error es necesario que un bloque de funcion de control tenga la salida error = TRUE;
