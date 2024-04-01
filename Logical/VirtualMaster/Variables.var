@@ -39,4 +39,5 @@ END_VAR
 VAR
 	TON_Jog : TON;
 	AuxJogStop : BOOL;
+	R_Reset : R_TRIG;
 END_VAR

@@ -71,7 +71,7 @@ PROGRAM _CYCLIC
 					
 					(* Configuracion terminada *)
 					
-					AxisConfig.Save := TRUE;
+					AxisConfig.Save := FALSE;
 					gAxis[AxisIndex].Cmd.ConfigReq := FALSE;
 				
 					IF gAxis[AxisIndex].Sts.ConfigDone AND AxisBasic.Info.ReadyToPowerOn THEN 
@@ -151,7 +151,10 @@ PROGRAM _CYCLIC
 					(* Ejecucion del home terminada *)
 					
 					AxisBasic.Home := FALSE;
-					StAxis := STATE_IDLE;
+					
+					IF AxisBasic.Info.AxisInitialized THEN 
+						StAxis := STATE_IDLE;
+					END_IF
 				
 			END_CASE
 			
@@ -423,8 +426,15 @@ PROGRAM _CYCLIC
 					IF gAxis[AxisIndex].Cmd.MoveVelocity THEN 
 						AxisBasic.MoveVelocity := TRUE;
 						StMoveVelocity := MOVE_VELOCITY_EXECUTE;
+						
+					ELSIF AxisBasicPar.Velocity <> gAxis[AxisIndex].Par.Speed OR AxisBasicPar.Acceleration <> gAxis[AxisIndex].Par.Acc 
+						OR AxisBasicPar.Deceleration <> gAxis[AxisIndex].Par.Decel THEN 
+						StMoveVelocity := MOVE_VELOCITY_CONFIG;
+						
 					ELSE
+						
 						AxisBasic.MoveVelocity := FALSE;
+						
 					END_IF
 				
 				MOVE_VELOCITY_EXECUTE:
@@ -458,15 +468,18 @@ PROGRAM _CYCLIC
 			
 		STATE_ERROR: ////////////////////////////////////////
 		
-			AxisBasic.JogNegative 	:= FALSE;
-			AxisBasic.JogPositive 	:= FALSE;
-			AxisBasic.MoveAbsolute 	:= FALSE;
-			AxisBasic.MoveAdditive 	:= FALSE;
-			AxisBasic.MoveVelocity 	:= FALSE;
 			
+		
+			AxisBasic.Stop := AxisBasic.MoveActive ;
 			
-			IF NOT gAxis[AxisIndex].Sts.Error THEN 
-				StAxis := STATE_IDLE;
+			IF NOT gAxis[AxisIndex].Sts.Error AND (NOT AxisBasic.MoveActive OR AxisBasic.Stopped) THEN 
+				AxisBasic.JogNegative 	:= FALSE;
+				AxisBasic.JogPositive 	:= FALSE;
+				AxisBasic.MoveAbsolute 	:= FALSE;
+				AxisBasic.MoveAdditive 	:= FALSE;
+				AxisBasic.MoveVelocity 	:= FALSE;
+				AxisBasic.Stop 			:= FALSE;
+				StAxis 					:= STATE_IDLE;
 			END_IF
 		
 		
@@ -482,9 +495,10 @@ PROGRAM _CYCLIC
 	END_IF
 	
 	//-- Reset
-	AxisBasic.ErrorReset 	:= AxisBasic.Error AND gAxis[AxisIndex].Cmd.Reset;
-	AxisConfig.ErrorReset 	:= AxisConfig.Error AND gAxis[AxisIndex].Cmd.Reset;
-	AxisCam.ErrorReset		:= AxisCam.Error AND gAxis[AxisIndex].Cmd.Reset;
+	R_Reset.CLK 			:= gAxis[AxisIndex].Cmd.Reset;
+	AxisBasic.ErrorReset 	:= AxisBasic.Error AND R_Reset.Q;
+	AxisConfig.ErrorReset 	:= AxisConfig.Error AND R_Reset.Q;
+	AxisCam.ErrorReset		:= AxisCam.Error AND R_Reset.Q;
 	
 	///////////////////////////////////////////
 		
@@ -499,6 +513,7 @@ PROGRAM _CYCLIC
 	
 	//----- FB Auxiliares -----//
 	
+	R_Reset();
 	TON_Jog();
 	
 	///////////////////////////////////////////
