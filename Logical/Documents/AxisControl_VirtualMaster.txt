@@ -16,6 +16,8 @@ Se usara la estuctura HomeState_enum para la configuracion y ejecucion del home.
 
 40 .- Etsado de espeara para modo de operacion [STATE_IDLE]:
 
+
+
 50 .- Modo de Operacion en Jog [ESTATE_JOG]:
 El control del jog esta en secuancia, los estados de la secuancia estan controlados por la estrcutura JogEstate_enum
 la secuencuencia esta dividad en configuracion de parametros del jog, estado espera de activacion, para activarse el bit gAxis[AxisIndex].Cmd.Jog debe

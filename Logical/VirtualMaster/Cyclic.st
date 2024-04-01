@@ -17,7 +17,7 @@ PROGRAM _CYCLIC
 	
 	AxisBasic.Enable 	:= gAxis[AxisIndex].Enable;
 	AxisConfig.Enable 	:= AxisBasic.Active;
-	AxisCam.Enable 		:= AxisBasic.Active AND AxisIndex > VMASTER;
+	AxisCam.Enable 		:= AxisBasic.Active AND AxisIndex <> MASTER;
 	
 	////////////////////////////////
 	
@@ -458,8 +458,18 @@ PROGRAM _CYCLIC
 			
 		STATE_ERROR: ////////////////////////////////////////
 		
-	
+			AxisBasic.JogNegative 	:= FALSE;
+			AxisBasic.JogPositive 	:= FALSE;
+			AxisBasic.MoveAbsolute 	:= FALSE;
+			AxisBasic.MoveAdditive 	:= FALSE;
+			AxisBasic.MoveVelocity 	:= FALSE;
 			
+			
+			IF NOT gAxis[AxisIndex].Sts.Error THEN 
+				StAxis := STATE_IDLE;
+			END_IF
+		
+		
 	END_CASE
 	
 	
