@@ -12,10 +12,12 @@ TYPE
 		ConfigReq : BOOL;
 		JogModeReq : BOOL; (*Seleccion modo jog*)
 		Jog : BOOL; (*Comando Movimiento en Jog*)
-		MoveAbsoluteModeReq : BOOL;
 		MoveAbsolute : BOOL;
-		MoveAdditiveModeReq : BOOL;
 		MoveAdditive : BOOL;
+		MoveVelocity : BOOL;
+		MoveAbsoluteModeReq : BOOL;
+		MoveAdditiveModeReq : BOOL;
+		MoveVelocityModeReq : BOOL;
 	END_STRUCT;
 	AxisStatus_type : 	STRUCT 
 		ConfigDone : BOOL;
@@ -29,6 +31,9 @@ TYPE
 		Jog : JogParameter_type;
 		AbsolutePosition : LREAL := 0.0;
 		AdditivePosition : LREAL := 0.0;
+		Speed : REAL;
+		Acc : REAL;
+		Decel : REAL;
 	END_STRUCT;
 	JogParameter_type : 	STRUCT 
 		Speed : REAL := 100.0;

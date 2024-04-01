@@ -3,7 +3,7 @@ Estados de la secuencia de control
 
 0 .- Habilitar el Eje [STATE_INIT]:
 el eje debe ser habilitado en la "Action" Config.st, por medio de la variable gAxis[AxisIndex].Enable.
-La mimsa activa las FB mpAxisBasic,mpAxisBasicConfig, mpAxisCamSequencer(esta o aplica para el eje maestro)
+La mimsa activa las FB mpAxisBasic,mpAxisBasicConfig, mpAxisCamSequencer(esta o aplica para el eje maestro).
 
 10 .- Configuracion del Eje [STATE_CONFIG]:
 Se usa la estructura StConfing para la dministracion y actualizacion de los parametros de configuracion del eje.
@@ -31,6 +31,10 @@ se controla la secuancia con la estructura AbosluteMove_enum.
 Seleccion movimiento aditivo gAxis[AxisIndex].Cmd.MoveAdditive = TRUE, el eje se movera a la posicion 
 en gAxis[AxisIndex].Par.AdditivePosition puede cambiar la posicion mientras gAxis[AxisIndex].Cmd.MoveAdditive = TRUE.
 se controla la secuancia con la estructura AdditiveMove_enum.
+
+80 .- Modo de operacion [STATE_MOVE_VELOCITY]:
+Seleccion movimiento continuo gAxis[AxisIndex].Cmd.MoveVelocityModeReq = TRUE, se cambia al estado movimiento continuo.
+los parametros acontrolar son velocidad,aceleracion y desaceleracion, la secuancia esta controlada por la estructura VelocityMov_enum;
 
 9000 .- Control de Error [STATE_ERROR]:
 para que que se de un error es necesario que un bloque de funcion de control tenga la salida error = TRUE;

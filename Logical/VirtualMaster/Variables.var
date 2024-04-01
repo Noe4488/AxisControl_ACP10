@@ -22,13 +22,7 @@ VAR
 	ReferenceDistance : LREAL;
 	SectorNumber : LREAL;
 	AxisIndex : USINT;
-	OldVelocity : REAL;
-	OldPosition : LREAL;
-	Test : BOOL;
 	AccVal : REAL;
-	TestTiempo : REAL;
-	OldAcc : REAL;
-	OldDecel : REAL;
 	DecelVal : REAL;
 END_VAR
 (*Variables control de secuancias*)
@@ -39,6 +33,7 @@ VAR
 	StMoveAbsolute : AbsoluteMov_enum;
 	StJog : JogStates_enum;
 	StMoveAdditive : AdditiveMov_enum;
+	StMoveVelocity : VelocityMov_enum;
 END_VAR
 (*Variables secuencia JOG*)
 VAR

@@ -158,6 +158,7 @@ PROGRAM _CYCLIC
 		STATE_IDLE: ////////////////////////////////////////
 			
 			(* seleccion modo operacion *)
+			
 			IF gAxis[AxisIndex].Cmd.JogModeReq THEN 
 				StJog 	:= JOG_CONFIG_REQ;
 				StAxis 	:= STATE_JOG;
@@ -167,6 +168,9 @@ PROGRAM _CYCLIC
 			ELSIF gAxis[AxisIndex].Cmd.MoveAdditiveModeReq THEN 
 				StMoveAdditive := MOVE_ADDITIVE_CONFIG;
 				StAxis := STATE_MOVE_ADDITIVE;
+			ELSIF gAxis[AxisIndex].Cmd.MoveVelocityModeReq THEN 
+				StMoveVelocity := MOVE_VELOCITY_CONFIG;
+				StAxis := STATE_MOVE_VELOCITY;
 			END_IF
 			
 		STATE_JOG: ////////////////////////////////////////
@@ -326,9 +330,10 @@ PROGRAM _CYCLIC
 				StMoveAbsolute := MOVE_ABSOLUTE_DONE;
 			END_IF
 				
-	STATE_MOVE_ADDITIVE: ////////////////////////////////////////
+		STATE_MOVE_ADDITIVE: ////////////////////////////////////////
+			
 		
-		CASE StMoveAdditive OF 
+			CASE StMoveAdditive OF 
 			
 				MOVE_ADDITIVE_CONFIG:
 					
@@ -344,6 +349,7 @@ PROGRAM _CYCLIC
 								
 				MOVE_ADDITIVE_WAIT:
 					
+					(* Espera comando de movimiento aditivo *)
 					
 					AxisBasic.Update := FALSE;
 					
@@ -354,6 +360,7 @@ PROGRAM _CYCLIC
 					
 				MOVE_ADDITIVE_EXECUTE:
 					
+					(* Executa movimiento aditvo *)
 					
 					AxisBasic.MoveAdditive := TRUE;
 					gAxis[AxisIndex].Cmd.MoveAdditive := FALSE;
@@ -365,6 +372,8 @@ PROGRAM _CYCLIC
 				
 				MOVE_ADDITIVE_IN_POSITION:
 					
+					(* Posicion aditivo alcanzada *)
+					
 					AxisBasic.MoveAdditive := FALSE;
 					
 					IF AxisBasic.Position <> gAxis[AxisIndex].Par.AdditivePosition THEN 
@@ -373,19 +382,82 @@ PROGRAM _CYCLIC
 					
 				MOVE_ADDITIVE_DONE:
 					
+					(* Modo movimineto aditivo terminado *)
+					
 					StAxis := STATE_IDLE;
 	
 			END_CASE
 			
 			
-		////---- Cambio modo de operacion
-		IF NOT gAxis[AxisIndex].Cmd.MoveAdditiveModeReq THEN 
-			StMoveAdditive := MOVE_ADDITIVE_DONE;
-		END_IF
+			////---- Cambio modo de operacion
+			IF NOT gAxis[AxisIndex].Cmd.MoveAdditiveModeReq THEN 
+				StMoveAdditive := MOVE_ADDITIVE_DONE;
+			END_IF
 			
 		
+		STATE_MOVE_VELOCITY: ////////////////////////////////////////
+			
+			CASE StMoveVelocity OF 
+				
+				
+				MOVE_VELOCITY_CONFIG:
+					
+					(* Asignacion y actualizacion parametros *)
+					
+					AxisBasicPar.Velocity := gAxis[AxisIndex].Par.Speed;
+					AxisBasicPar.Acceleration := gAxis[AxisIndex].Par.Acc;
+					AxisBasicPar.Deceleration := gAxis[AxisIndex].Par.Decel;
+				
+					AxisBasic.Update := TRUE;
+				
+					IF AxisBasic.UpdateDone THEN 
+						StMoveVelocity := MOVE_VELOCITY_WAIT;
+					END_IF
+				
+				MOVE_VELOCITY_WAIT:
+					
+					(* Eje en espera de comando velocity *)
+					
+					AxisBasic.Update := FALSE;
+					
+					IF gAxis[AxisIndex].Cmd.MoveVelocity THEN 
+						AxisBasic.MoveVelocity := TRUE;
+						StMoveVelocity := MOVE_VELOCITY_EXECUTE;
+					ELSE
+						AxisBasic.MoveVelocity := FALSE;
+					END_IF
+				
+				MOVE_VELOCITY_EXECUTE:
+					
+					(* Eje ejecutandose, verifica si hay cambios de parametros *)
+					
+					IF AxisBasicPar.Velocity <> gAxis[AxisIndex].Par.Speed OR AxisBasicPar.Acceleration <> gAxis[AxisIndex].Par.Acc 
+						OR AxisBasicPar.Deceleration <> gAxis[AxisIndex].Par.Decel THEN 
+						StMoveVelocity := MOVE_VELOCITY_CONFIG;
+					ELSIF NOT gAxis[AxisIndex].Cmd.MoveVelocity THEN 
+						StMoveVelocity := MOVE_VELOCITY_WAIT;
+					END_IF
+				
+				MOVE_VELOCITY_DONE:
+				
+					(* Funcion move velocity terminada *)
+					
+					AxisBasic.MoveVelocity := FALSE;
+					 
+					IF NOT AxisBasic.MoveActive THEN 
+						StAxis := STATE_IDLE;
+					END_IF
+				
+			END_CASE	
+				
+			////----- Cambio modo de operacion	
+			IF NOT gAxis[AxisIndex].Cmd.MoveVelocityModeReq THEN
+				StMoveVelocity := MOVE_VELOCITY_DONE;
+			END_IF
+			
+			
+		STATE_ERROR: ////////////////////////////////////////
 		
-	STATE_ERROR: ////////////////////////////////////////
 	
 			
 	END_CASE
